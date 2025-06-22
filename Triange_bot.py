@@ -96,17 +96,22 @@ def calc_triangle(p1, p2, p3, invert2):
         return None
     a_amount = TRADE_USD / a_price * (1 - FEE)
 
-    # Step 2: A → B (bid)
-    b_price, b_cost = get_avg_price(book2, 'bids', a_amount if not invert2 else a_amount * b_price)
+    # Step 2: A → B (bid), предварительно проверим цену
+    b_price_check = book2['bids'][0][0] if book2['bids'] else None
+    if not b_price_check:
+        return None
+    b_trade_amount = a_amount if not invert2 else a_amount * b_price_check
+    b_price, b_cost = get_avg_price(book2, 'bids', b_trade_amount)
     if not b_price or b_cost < MIN_LIQUIDITY:
         return None
+
     if invert2:
         b_amount = a_amount / b_price * (1 - FEE)
     else:
         b_amount = a_amount * b_price * (1 - FEE)
 
     # Step 3: B → USDT (bid)
-    c_price, c_cost = get_avg_price(book3, 'bids', b_amount * c_price if c_price else 0)
+    c_price, c_cost = get_avg_price(book3, 'bids', b_amount * book3['bids'][0][0])
     if not c_price or c_cost < MIN_LIQUIDITY:
         return None
     final = b_amount * c_price * (1 - FEE)
