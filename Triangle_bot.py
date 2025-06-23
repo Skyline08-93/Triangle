@@ -6,10 +6,18 @@ from datetime import datetime
 from colorama import Fore, init
 init(autoreset=True)
 
-API_KEY = os.getenv('API_KEY')
-SECRET = os.getenv('SECRET')
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-CHAT_ID = os.getenv('CHAT_ID')
+API_KEY = os.getenv("API_KEY")
+SECRET = os.getenv("SECRET")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
+bybit = ccxt.bybit({
+    'apiKey': API_KEY,
+    'secret': SECRET,
+    'enableRateLimit': True,
+    'timeout': 10000,
+    'options': {'defaultType': 'spot'}
+})
 
 FEE = 0.001
 MIN_PROFIT_PCT = 0.5
